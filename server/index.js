@@ -1,5 +1,5 @@
-var express = require("express");
-var app = express();
-app.listen(3000, () => {
- console.log("Media Player Daemon REST Server running on port 3000");
+require("@babel/register")({
+    presets: ["@babel/preset-env"]
 });
+  
+module.exports = require('./radio.js')
