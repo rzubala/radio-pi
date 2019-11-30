@@ -9,10 +9,6 @@ app.listen(3000, () => {
     console.log("Media Player Daemon REST Server running on port 3000");
 });
 
-app.get("/url", (req, res, next) => {
-    res.json(["Tony","Lisa","Michael","Ginger","Food"]);
-});
-
 app.get("/play", (req, res, next) => {
     mpc.playback.play()
     res.json("Play")
@@ -22,4 +18,3 @@ app.get("/stop", (req, res, next) => {
     mpc.playback.stop()
     res.json("Stop")
 })
-
