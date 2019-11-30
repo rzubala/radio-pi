@@ -1,0 +1,16 @@
+{
+  "name": "radio-pi-server",
+  "version": "1.0.0",
+  "description": "REST server to handle Music Player Daemon",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mpc-js": "^1.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rafał Zubala",
+  "license": "ISC"
+}
