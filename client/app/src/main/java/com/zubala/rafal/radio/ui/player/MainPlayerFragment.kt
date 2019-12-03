@@ -1,6 +1,7 @@
 package com.zubala.rafal.radio.ui.player
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,10 +22,12 @@ class MainPlayerFragment : Fragment() {
         val mainPlayerViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainPlayerViewModel::class.java)
 
         binding.stop.setOnClickListener {
+            Log.i("Pi", "STOP")
             mainPlayerViewModel.stop()
         }
 
         binding.play.setOnClickListener {
+            Log.i("Pi", "PLAY")
             mainPlayerViewModel.play()
         }
 
