@@ -13,7 +13,6 @@ class MainPlayerViewModel(application: Application) : AndroidViewModel(applicati
     fun stop() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.i("PI ViewModel", "STOP")
                 PlayerApi.retrofitService.getStop()
             }
         }
@@ -22,8 +21,15 @@ class MainPlayerViewModel(application: Application) : AndroidViewModel(applicati
     fun play() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.i("PI ViewModel", "PLAY")
                 PlayerApi.retrofitService.getPlay()
+            }
+        }
+    }
+
+    fun shutdown() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                PlayerApi.retrofitService.getShutdown()
             }
         }
     }

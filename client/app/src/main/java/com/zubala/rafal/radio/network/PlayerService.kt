@@ -21,6 +21,9 @@ interface PlayerApiService {
     @GET("play")
     fun getPlay(): Deferred<String>
 
+    @GET("shutdown")
+    fun getShutdown(): Deferred<String>
+
 }
 
 object PlayerApi {

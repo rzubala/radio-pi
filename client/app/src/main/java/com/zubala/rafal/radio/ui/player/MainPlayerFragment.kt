@@ -22,13 +22,15 @@ class MainPlayerFragment : Fragment() {
         val mainPlayerViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainPlayerViewModel::class.java)
 
         binding.stop.setOnClickListener {
-            Log.i("Pi", "STOP")
             mainPlayerViewModel.stop()
         }
 
         binding.play.setOnClickListener {
-            Log.i("Pi", "PLAY")
             mainPlayerViewModel.play()
+        }
+
+        binding.shutdown.setOnClickListener {
+            mainPlayerViewModel.shutdown()
         }
 
         return binding.root
