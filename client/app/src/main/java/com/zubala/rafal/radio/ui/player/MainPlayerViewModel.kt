@@ -1,7 +1,6 @@
 package com.zubala.rafal.radio.ui.player
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.zubala.rafal.radio.network.PlayerApi
@@ -30,6 +29,14 @@ class MainPlayerViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 PlayerApi.retrofitService.getShutdown()
+            }
+        }
+    }
+
+    fun restart() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                PlayerApi.retrofitService.getRestart()
             }
         }
     }

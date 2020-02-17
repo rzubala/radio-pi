@@ -7,4 +7,6 @@ export default function routes(app) {
     app.route('/stop').get(player.stop)
 
     app.route('/shutdown').get(system.shutdown)
+    
+    app.route('/restart').get(system.restart)
 }

@@ -33,6 +33,10 @@ class MainPlayerFragment : Fragment() {
             mainPlayerViewModel.shutdown()
         }
 
+        binding.restart.setOnClickListener {
+            mainPlayerViewModel.restart()
+        }
+
         return binding.root
     }
 }
