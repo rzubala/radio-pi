@@ -17,4 +17,10 @@ const styles = StyleSheet.create({
   }
 });
 
+export const screenOptions = props => {
+  return {
+    headerTitle: "Settings"
+  }
+}
+
 export default SettingsScreen;
