@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import {
-  Text,
-  View,
-  Button,
-  StyleSheet,
-  ActivityIndicator
-} from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 
 //import RNEventSource from 'react-native-event-source'
 
+import MainButton from "../components/MainButton";
 import { Colors } from "../constants/colors";
 //import { addToPlaylist, clearPlaylist, play, stop } from "../radio/mopidy-service";
 import { play, stop } from "../radio/rest-service";
@@ -48,15 +43,16 @@ const RadioScreen = props => {
           {waitForPlaying ? (
             <ActivityIndicator color={Colors.primary} size="small" />
           ) : (
-            <Button title="Play" color={Colors.primary} onPress={playHandler} />
+            <MainButton onPress={playHandler}>Play</MainButton>
           )}
         </View>
         <View style={styles.buttonContainer}>
-          <Button
-            title="Stop radio"
-            color={Colors.accent}
+          <MainButton
+            buttonStyle={{ backgroundColor: Colors.accent }}
             onPress={stopHandler}
-          />
+          >
+            Stop
+          </MainButton>
         </View>
       </View>
     </View>
