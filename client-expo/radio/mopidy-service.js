@@ -1,4 +1,4 @@
-export const play = radioUrl => {
+export const play = async radioUrl => {
   sendToRadio(radioUrl, "core.playback.play");
 };
 
@@ -6,11 +6,11 @@ export const stop = async radioUrl => {
   sendToRadio(radioUrl, "core.playback.stop");
 };
 
-export const clearPlaylist = radioUrl => {
+export const clearPlaylist = async radioUrl => {
   sendToRadio(radioUrl, "core.tracklist.clear");
 };
 
-export const addToPlaylist = (radioUrl, streamUrl) => {
+export const addToPlaylist = async (radioUrl, streamUrl) => {
   sendToRadio(radioUrl, "core.tracklist.add", {
     tracks: null,
     at_position: null,
@@ -37,5 +37,6 @@ const sendToRadio = async (radioUrl, method, paramsData) => {
     console.log(errorResData);
   } else {
     const resData = await response.json();
+    //console.log(resData);
   }
 };
