@@ -6,10 +6,11 @@ import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import MainButton from "../components/MainButton";
 import { Colors } from "../constants/colors";
 //import { addToPlaylist, clearPlaylist, play, stop } from "../radio/mopidy-service";
-import { play, stop } from "../radio/rest-service";
+import { play, stop, addToPlaylist } from "../radio/rest-service";
 
 //const radioUrl = "http://192.168.0.3:6680";
 const radioUrl = "http://192.168.0.3:3000";
+//const radioUrl = "http://192.168.0.5:3000";
 const streamUrl = "http://redir.atmcdn.pl/sc/o2/Eurozet/live/meloradio.livx";
 
 //const source = new EventSource(`${radioUrl}/mopidy/rpc`);
@@ -27,8 +28,8 @@ const RadioScreen = props => {
   const playHandler = async () => {
     setWaitForPlaying(true);
     // clearPlaylist(radioUrl);
-    // addToPlaylist(radioUrl, streamUrl);
-    play(radioUrl);
+    await addToPlaylist(radioUrl, streamUrl);
+    await play(radioUrl);
     setWaitForPlaying(false);
   };
 

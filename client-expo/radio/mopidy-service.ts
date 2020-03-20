@@ -1,13 +1,13 @@
 export const play = async radioUrl => {
-  sendToRadio(radioUrl, "core.playback.play");
+  sendToRadio(radioUrl, "core.playback.play", null);
 };
 
 export const stop = async radioUrl => {
-  sendToRadio(radioUrl, "core.playback.stop");
+  sendToRadio(radioUrl, "core.playback.stop", null);
 };
 
 export const clearPlaylist = async radioUrl => {
-  sendToRadio(radioUrl, "core.tracklist.clear");
+  sendToRadio(radioUrl, "core.tracklist.clear", null);
 };
 
 export const addToPlaylist = async (radioUrl, streamUrl) => {
