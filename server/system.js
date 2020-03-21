@@ -18,3 +18,6 @@ export function restart(req, res) {
     res.json("Restart")
 }
 
+export function ping(req, res) {
+    res.json("OK")
+}

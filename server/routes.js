@@ -11,4 +11,6 @@ export default function routes(app) {
     app.route('/shutdown').get(system.shutdown)
     
     app.route('/restart').get(system.restart)
+
+    app.route('/ping').get(system.ping)
 }

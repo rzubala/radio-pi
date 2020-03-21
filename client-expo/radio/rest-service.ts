@@ -10,17 +10,26 @@ export const addToPlaylist = async (radioUrl: string, streamUrl: string) => {
   postToRadio(radioUrl, "add", streamUrl);
 };
 
+export const ping = async (radioUrl: string) => {
+  return getToRadio(radioUrl, "ping")
+}
+
 const getToRadio = async (radioUrl: string, method: string) => {
-  const response = await fetch(`${radioUrl}/${method}`, {
-    method: "GET"
-  });
-  if (!response.ok) {
-    const errorResData = await response.json();
-    console.log("error!");
-    console.log(errorResData);
-  } else {
-    const resData = await response.json();
-    //console.log(resData);
+  try {
+    const response = await fetch(`${radioUrl}/${method}`, {
+      method: "GET"
+    });
+    if (!response.ok) {
+      const errorResData = await response.json();
+      console.log("error!");
+      console.log(errorResData);
+    } else {
+      const resData = await response.json();
+      //console.log(resData);
+      return resData
+    }
+  } catch (err) {
+    throw new Error("something went wrong");
   }
 };
 

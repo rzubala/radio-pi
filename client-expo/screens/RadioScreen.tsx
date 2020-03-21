@@ -1,39 +1,55 @@
-import React, { useState } from "react";
-import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
-
-//import RNEventSource from 'react-native-event-source'
+import React, { useState, useEffect, useCallback } from "react";
+import { Text, View, StyleSheet, ActivityIndicator, Alert } from "react-native";
 
 import MainButton from "../components/MainButton";
 import { Colors } from "../constants/colors";
-//import { addToPlaylist, clearPlaylist, play, stop } from "../radio/mopidy-service";
-import { play, stop, addToPlaylist } from "../radio/rest-service";
+import { play, stop, addToPlaylist, ping } from "../radio/rest-service";
 
-//const radioUrl = "http://192.168.0.3:6680";
-const radioUrl = "http://192.168.0.3:3000";
-//const radioUrl = "http://192.168.0.5:3000";
-const streamUrl = "http://redir.atmcdn.pl/sc/o2/Eurozet/live/meloradio.livx";
-
-//const source = new EventSource(`${radioUrl}/mopidy/rpc`);
-//source.addEventListener('track_playback_started', playbackStarted, false);
-
-// const eventSource = new RNEventSource(`${radioUrl}/mopidy/rpc`);
-// eventSource.addEventListener('track_playback_started', (event) => {
-//   console.log(event.type); // message
-//   console.log(event.data);
-// });
+//const radioUrl = "http://192.168.0.3:6680"; //mopidy
+//const radioUrl = "http://192.168.0.3:3000";
+const radioUrl = "http://192.168.0.5:3000";
+//const streamUrl = "http://redir.atmcdn.pl/sc/o2/Eurozet/live/meloradio.livx";
+const streamUrl = "http://stream4.nadaje.com:8002/muzo";
 
 const RadioScreen = props => {
   const [waitForPlaying, setWaitForPlaying] = useState(false);
+  const [connected, setConnected] = useState(false)
+
+  const pingServer = useCallback(async () => {
+    try {
+      await ping(radioUrl);
+      setConnected(true)
+    } catch (err) {
+      setConnected(false)
+      Alert.alert(
+        "Error",
+        `No connection to radio: ${radioUrl}`,
+        [{ text: "Try again", onPress: () => pingServer() }],
+        { cancelable: false }
+      );
+    }
+  }, [ping, radioUrl, setConnected]);
+
+  useEffect(() => {
+    pingServer();
+  }, [pingServer]);
 
   const playHandler = async () => {
     setWaitForPlaying(true);
-    // clearPlaylist(radioUrl);
+    pingServer()
+    if (!connected) {
+      return
+    }
     await addToPlaylist(radioUrl, streamUrl);
     await play(radioUrl);
     setWaitForPlaying(false);
   };
 
   const stopHandler = () => {
+    pingServer()
+    if (!connected) {
+      return
+    }
     stop(radioUrl);
   };
 
