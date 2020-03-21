@@ -1,31 +1,34 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Text, View, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { Text, View, StyleSheet, Alert, FlatList } from "react-native";
 
-import * as trackActions from '../store/actions/tracks'
-import MainButton from "../components/MainButton";
+import * as trackActions from "../store/actions/tracks";
+import MainButton from "../components/UI/MainButton";
 import { Colors } from "../constants/colors";
 import { play, stop, addToPlaylist, ping } from "../radio/rest-service";
+import Track from "../models/track";
+import TrackListItem from "../components/TrackListItem";
 
 //const radioUrl = "http://192.168.0.3:6680"; //mopidy
 //const radioUrl = "http://192.168.0.3:3000";
 const radioUrl = "http://192.168.0.5:3000";
+
 //const streamUrl = "http://redir.atmcdn.pl/sc/o2/Eurozet/live/meloradio.livx";
-const streamUrl = "http://stream4.nadaje.com:8002/muzo";
+//const streamUrl = "http://stream4.nadaje.com:8002/muzo";
 
 const RadioScreen = props => {
   const [connected, setConnected] = useState(false);
-  const tracks = useSelector(state => state.tracks.tracks)
+  const tracks = useSelector(state => state.tracks.tracks);
 
   const dispatch = useDispatch();
 
   const loadTracks = useCallback(() => {
-    dispatch(trackActions.fetchTracks())
-  }, [dispatch])
+    dispatch(trackActions.fetchTracks());
+  }, [dispatch]);
 
   useEffect(() => {
-    loadTracks()
-  }, [dispatch, loadTracks])
+    loadTracks();
+  }, [dispatch, loadTracks]);
 
   const pingServer = useCallback(async () => {
     try {
@@ -46,12 +49,12 @@ const RadioScreen = props => {
     pingServer();
   }, [pingServer]);
 
-  const playHandler = async () => {
+  const playHandler = async (stream: string) => {
     pingServer();
     if (!connected) {
       return;
     }
-    await addToPlaylist(radioUrl, streamUrl);
+    await addToPlaylist(radioUrl, stream);
     await play(radioUrl);
   };
 
@@ -63,14 +66,28 @@ const RadioScreen = props => {
     stop(radioUrl);
   };
 
-  console.log('tracks', tracks)
+  console.log("tracks", tracks);
 
   return (
     <View style={styles.screen}>
+      <View style={styles.playlistContainer}>
+        <FlatList
+          keyExtractor={(item: Track) => item.id}
+          data={tracks}
+          renderItem={itemData => {
+            return (
+              <TrackListItem
+                name={itemData.item.name}
+                image={itemData.item.logoUrl}
+                onSelect={() => {
+                  playHandler(itemData.item.url);
+                }}
+              />
+            );
+          }}
+        />
+      </View>
       <View style={styles.buttonsContainer}>
-        <View style={styles.buttonContainer}>
-          <MainButton onPress={playHandler}>Play</MainButton>
-        </View>
         <View style={styles.buttonContainer}>
           <MainButton
             buttonStyle={{ backgroundColor: Colors.accent }}
@@ -87,16 +104,22 @@ const RadioScreen = props => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center"
   },
+  playlistContainer: {
+    flex: 7,
+    width: "100%"
+  },
   buttonsContainer: {
+    flex: 1,
     width: "50%",
-    height: "50%",
-    justifyContent: "space-around"
+    justifyContent: 'flex-end',
+    paddingBottom: 20
   },
   buttonContainer: {
-    height: "100%"
+    height: "100%",
+    justifyContent: 'flex-end',
   }
 });
 

@@ -7,10 +7,10 @@ import {
   TouchableNativeFeedback,
   Platform
 } from "react-native";
-import { Colors } from "../constants/colors";
+import { Colors } from "../../constants/colors";
 
 const MainButton = props => {
-  let ButtonComponent = TouchableOpacity;
+  let ButtonComponent: any = TouchableOpacity;
   if (Platform.OS == "android" && Platform.Version >= 21) {
     ButtonComponent = TouchableNativeFeedback;
   }
