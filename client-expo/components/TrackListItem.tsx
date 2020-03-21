@@ -18,7 +18,7 @@ const TrackListItem = props => {
       ? TouchableNativeFeedback
       : TouchableOpacity;
   return (
-    <Card style={styles.track}>
+    <Card style={{...styles.track, ...props.style}}>
       <View style={styles.touchable}>
         <TouchableComponent onPress={props.onSelect} useForeground>
           <View style={styles.trackRow}>

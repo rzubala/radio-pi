@@ -2,7 +2,7 @@ export const play = async (radioUrl: string) => {
   getToRadio(radioUrl, "play");
 };
 
-export const stop = (radioUrl: string) => {
+export const stop = async (radioUrl: string) => {
   getToRadio(radioUrl, "stop");
 };
 

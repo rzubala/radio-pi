@@ -11,13 +11,12 @@ import TrackListItem from "../components/TrackListItem";
 
 //const radioUrl = "http://192.168.0.3:6680"; //mopidy
 //const radioUrl = "http://192.168.0.3:3000";
-const radioUrl = "http://192.168.0.5:3000";
-
-//const streamUrl = "http://redir.atmcdn.pl/sc/o2/Eurozet/live/meloradio.livx";
-//const streamUrl = "http://stream4.nadaje.com:8002/muzo";
+const radioUrl = "http://192.168.0.3:3000";
 
 const RadioScreen = props => {
   const [connected, setConnected] = useState(false);
+  const [playingId, setPlayingId] = useState("");
+
   const tracks = useSelector(state => state.tracks.tracks);
 
   const dispatch = useDispatch();
@@ -49,24 +48,25 @@ const RadioScreen = props => {
     pingServer();
   }, [pingServer]);
 
-  const playHandler = async (stream: string) => {
+  const playHandler = async (stream: string, id: string) => {
     pingServer();
     if (!connected) {
       return;
     }
+    await stop(radioUrl);
     await addToPlaylist(radioUrl, stream);
     await play(radioUrl);
+    setPlayingId(id);
   };
 
-  const stopHandler = () => {
+  const stopHandler = async () => {
     pingServer();
     if (!connected) {
       return;
     }
-    stop(radioUrl);
+    await stop(radioUrl);
+    setPlayingId(null);
   };
-
-  console.log("tracks", tracks);
 
   return (
     <View style={styles.screen}>
@@ -79,8 +79,16 @@ const RadioScreen = props => {
               <TrackListItem
                 name={itemData.item.name}
                 image={itemData.item.logoUrl}
+                style={
+                  itemData.item.id === playingId
+                    ? {
+                        borderColor: Colors.primary,
+                        borderWidth: 3
+                      }
+                    : {}
+                }
                 onSelect={() => {
-                  playHandler(itemData.item.url);
+                  playHandler(itemData.item.url, itemData.item.id);
                 }}
               />
             );
@@ -114,12 +122,12 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flex: 1,
     width: "50%",
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     paddingBottom: 20
   },
   buttonContainer: {
     height: "100%",
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end"
   }
 });
 
