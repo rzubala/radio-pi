@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Text, View, StyleSheet, ActivityIndicator, Alert } from "react-native";
 
+import * as trackActions from '../store/actions/tracks'
 import MainButton from "../components/MainButton";
 import { Colors } from "../constants/colors";
 import { play, stop, addToPlaylist, ping } from "../radio/rest-service";
@@ -12,15 +14,25 @@ const radioUrl = "http://192.168.0.5:3000";
 const streamUrl = "http://stream4.nadaje.com:8002/muzo";
 
 const RadioScreen = props => {
-  const [waitForPlaying, setWaitForPlaying] = useState(false);
-  const [connected, setConnected] = useState(false)
+  const [connected, setConnected] = useState(false);
+  const tracks = useSelector(state => state.tracks.tracks)
+
+  const dispatch = useDispatch();
+
+  const loadTracks = useCallback(() => {
+    dispatch(trackActions.fetchTracks())
+  }, [dispatch])
+
+  useEffect(() => {
+    loadTracks()
+  }, [dispatch, loadTracks])
 
   const pingServer = useCallback(async () => {
     try {
       await ping(radioUrl);
-      setConnected(true)
+      setConnected(true);
     } catch (err) {
-      setConnected(false)
+      setConnected(false);
       Alert.alert(
         "Error",
         `No connection to radio: ${radioUrl}`,
@@ -35,33 +47,29 @@ const RadioScreen = props => {
   }, [pingServer]);
 
   const playHandler = async () => {
-    setWaitForPlaying(true);
-    pingServer()
+    pingServer();
     if (!connected) {
-      return
+      return;
     }
     await addToPlaylist(radioUrl, streamUrl);
     await play(radioUrl);
-    setWaitForPlaying(false);
   };
 
   const stopHandler = () => {
-    pingServer()
+    pingServer();
     if (!connected) {
-      return
+      return;
     }
     stop(radioUrl);
   };
+
+  console.log('tracks', tracks)
 
   return (
     <View style={styles.screen}>
       <View style={styles.buttonsContainer}>
         <View style={styles.buttonContainer}>
-          {waitForPlaying ? (
-            <ActivityIndicator color={Colors.primary} size="small" />
-          ) : (
-            <MainButton onPress={playHandler}>Play</MainButton>
-          )}
+          <MainButton onPress={playHandler}>Play</MainButton>
         </View>
         <View style={styles.buttonContainer}>
           <MainButton

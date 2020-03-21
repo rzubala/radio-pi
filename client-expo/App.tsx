@@ -5,9 +5,11 @@ import ReduxThunk from 'redux-thunk'
 
 import AppNavigator from './navigation/AppNavigator'
 import configReducer from './store/reducers/config'
+import tracksReducer from './store/reducers/tracks'
 
 const rootReducer = combineReducers({
-  config: configReducer
+  config: configReducer,
+  tracks: tracksReducer
 })
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk))
