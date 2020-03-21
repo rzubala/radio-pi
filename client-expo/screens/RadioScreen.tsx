@@ -11,7 +11,7 @@ import TrackListItem from "../components/TrackListItem";
 
 //const radioUrl = "http://192.168.0.3:6680"; //mopidy
 //const radioUrl = "http://192.168.0.3:3000";
-const radioUrl = "http://192.168.0.3:3000";
+const radioUrl = "http://192.168.0.5:3000";
 
 const RadioScreen = props => {
   const [connected, setConnected] = useState(false);
@@ -29,38 +29,41 @@ const RadioScreen = props => {
     loadTracks();
   }, [dispatch, loadTracks]);
 
-  const pingServer = useCallback(async () => {
+  const pingServer = useCallback(async (initial: boolean) => {
     try {
-      await ping(radioUrl);
+      const pingData = await ping(radioUrl);
+      if (initial && pingData && pingData.streamId) {
+        setPlayingId(pingData.streamId)        
+      }
       setConnected(true);
     } catch (err) {
       setConnected(false);
       Alert.alert(
         "Error",
         `No connection to radio: ${radioUrl}`,
-        [{ text: "Try again", onPress: () => pingServer() }],
+        [{ text: "Try again", onPress: () => pingServer(initial) }],
         { cancelable: false }
       );
     }
-  }, [ping, radioUrl, setConnected]);
+  }, [ping, radioUrl, setConnected, setPlayingId]);
 
   useEffect(() => {
-    pingServer();
+    pingServer(true);
   }, [pingServer]);
 
   const playHandler = async (stream: string, id: string) => {
-    pingServer();
+    pingServer(false);
     if (!connected) {
       return;
     }
     await stop(radioUrl);
-    await addToPlaylist(radioUrl, stream);
+    await addToPlaylist(radioUrl, stream, id);
     await play(radioUrl);
     setPlayingId(id);
   };
 
   const stopHandler = async () => {
-    pingServer();
+    pingServer(false);
     if (!connected) {
       return;
     }

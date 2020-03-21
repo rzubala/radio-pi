@@ -1,5 +1,7 @@
 import { spawn } from 'child_process';
 
+import { streamId } from './player'
+
 export function shutdown(req, res) {
     const s = spawn('bash');
     s.stdin.end(`sudo shutdown -h 0`);
@@ -19,5 +21,5 @@ export function restart(req, res) {
 }
 
 export function ping(req, res) {
-    res.json("OK")
+    res.json({streamId: streamId})
 }

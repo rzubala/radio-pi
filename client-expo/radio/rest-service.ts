@@ -6,8 +6,8 @@ export const stop = async (radioUrl: string) => {
   getToRadio(radioUrl, "stop");
 };
 
-export const addToPlaylist = async (radioUrl: string, streamUrl: string) => {
-  postToRadio(radioUrl, "add", streamUrl);
+export const addToPlaylist = async (radioUrl: string, streamUrl: string, streamId: string) => {
+  postToRadio(radioUrl, "add", streamUrl, streamId);
 };
 
 export const ping = async (radioUrl: string) => {
@@ -36,13 +36,15 @@ const getToRadio = async (radioUrl: string, method: string) => {
 const postToRadio = async (
   radioUrl: string,
   method: string,
-  paramsData: string
+  paramsData: string,
+  streamId: string
 ) => {
   const headers = {
     "Content-Type": "application/json"
   };
   const data = JSON.stringify({
-    "track": paramsData
+    "track": paramsData,
+    "streamId": streamId
   });
   const response = await fetch(`${radioUrl}/${method}`, {
     method: "POST",
@@ -54,7 +56,8 @@ const postToRadio = async (
     console.log("error!");
     console.log(errorResData);
   } else {
-    const resData = await response.json();
+    const resData = await response.json();    
     //console.log(resData);
+    return resData
   }
 };
