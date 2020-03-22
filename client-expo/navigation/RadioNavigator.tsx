@@ -1,6 +1,9 @@
 import React from "react";
 import { Platform } from "react-native";
-import { createStackNavigator, StackNavigationOptions } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  StackNavigationOptions
+} from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -11,6 +14,9 @@ import RadioScreen, {
 import SettingsScreen, {
   screenOptions as SettingsScreenOptions
 } from "../screens/SettingsScreen";
+import TracksOverviewScreen, {
+  screenOptions as tracksOverviewScreenOptions
+} from "../screens/TracksOverviewScreen";
 
 const defaultNavOptions: StackNavigationOptions = {
   headerStyle: {
@@ -51,6 +57,15 @@ export const SettingsStackNavigator = props => {
   );
 };
 
+const TracksNavigatorStack = createStackNavigator();
+export const TracksOverviewNavigator = props => {
+  return (
+    <TracksNavigatorStack.Navigator screenOptions={defaultNavOptions}>
+      <TracksNavigatorStack.Screen name="Tracks" component={TracksOverviewScreen} options={tracksOverviewScreenOptions}/>
+    </TracksNavigatorStack.Navigator>
+  );
+};
+
 const tabBarScreenOptions = ({ route }) => ({
   tabBarIcon: ({ focused, color, size }) => {
     let iconName;
@@ -59,20 +74,22 @@ const tabBarScreenOptions = ({ route }) => ({
       iconName = focused ? "md-radio" : "md-radio";
     } else if (route.name === "Settings") {
       iconName = focused ? "ios-list-box" : "ios-list";
+    } else if (route.name === "Streams") {
+      iconName = focused ? "md-musical-notes" : "md-musical-notes";      
     }
     return <Ionicons name={iconName} size={size} color={color} />;
   }
-})
+});
 
 const RadioNavigatorTab = createBottomTabNavigator();
 export const RadioNavigator = () => {
   return (
     <RadioNavigatorTab.Navigator
       screenOptions={tabBarScreenOptions}
-      tabBarOptions={{        
-        activeBackgroundColor: Platform.OS == 'android' ? Colors.primary : "",
-        inactiveBackgroundColor: Platform.OS == 'android' ? Colors.primary : "",
-        activeTintColor: Platform.OS == 'android' ? "white" : Colors.primary,
+      tabBarOptions={{
+        activeBackgroundColor: Platform.OS == "android" ? Colors.primary : "",
+        inactiveBackgroundColor: Platform.OS == "android" ? Colors.primary : "",
+        activeTintColor: Platform.OS == "android" ? "white" : Colors.primary,
         inactiveTintColor: Colors.inactive
       }}
     >
@@ -80,6 +97,10 @@ export const RadioNavigator = () => {
       <RadioNavigatorTab.Screen
         name="Settings"
         component={SettingsStackNavigator}
+      />
+      <RadioNavigatorTab.Screen
+        name="Streams"
+        component={TracksOverviewNavigator}
       />
     </RadioNavigatorTab.Navigator>
   );
