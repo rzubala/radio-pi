@@ -20,6 +20,18 @@ export function addToPlaylist(req, res) {
     res.json("ADD: " + track)
 }
 
+export function setVolume(req, res) {
+    const volume = req.body.volume  
+    mpc.playbackOptions.setVolume(volume)
+    .then(out => {
+        console.log('volume', volume)
+    })
+    .catch(err => {
+        console.log('error', err)
+    })
+    res.json("VOLUME: " + volume)
+}
+
 export function stop(req, res) {    
     mpc.playback.stop()
     .then(out => {

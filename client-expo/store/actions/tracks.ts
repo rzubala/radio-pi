@@ -7,7 +7,6 @@ export const loadTracks = () => {
     try {
       const initResult = await init();
       const dbResult = await fetchTracks();
-      console.log(dbResult);
       dispatch({ type: FETCH_TRACKS, tracks: dbResult.rows._array });
     } catch (err) {
       throw err;
