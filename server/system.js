@@ -13,7 +13,8 @@ export function shutdown(req, res) {
 
 export function restart(req, res) {
     const s = spawn('bash');
-    s.stdin.end(`sudo service mpd restart && sudo service mopidy restart`);
+    //s.stdin.end(`sudo service mpd restart && sudo service mopidy restart`);
+    s.stdin.end(`sudo shutdown -r 0`);
     s.once('exit', code => {
         console.log(`Restart ${code}`)
     }); 

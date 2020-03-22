@@ -8,7 +8,7 @@ export const getConfig = () => {
     const userData = await AsyncStorage.getItem("userData")
     let ip = JSON.parse(userData).ip
     if (!ip) {
-        ip = "http://192.168.0.3:3000"
+        ip = "http://192.168.0.3:3000"  //"http://192.168.0.3:6680"; //mopidy
     }
     dispatch({ type: GET_CONFIG, data:  ip});
   }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Text, View, StyleSheet, Alert, FlatList } from "react-native";
+import { View, StyleSheet, Alert, FlatList } from "react-native";
 
 import * as trackActions from "../store/actions/tracks";
 import * as configActions from '../store/actions/config'
@@ -9,10 +9,6 @@ import { Colors } from "../constants/colors";
 import { play, stop, addToPlaylist, ping } from "../radio/rest-service";
 import Track from "../models/track";
 import TrackListItem from "../components/TrackListItem";
-
-//const radioUrl = "http://192.168.0.3:6680"; //mopidy
-//const radioUrl = "http://192.168.0.3:3000";
-//const radioUrl = "http://192.168.0.5:3000";
 
 const RadioScreen = props => {
   const [connected, setConnected] = useState(false);
@@ -30,11 +26,6 @@ const RadioScreen = props => {
   const fetchRadioUrl = useCallback(() => {
     dispatch(configActions.getConfig());
   }, [dispatch]);
-
-  useEffect(() => {
-    fetchRadioUrl()
-    loadTracks();
-  }, [dispatch, loadTracks, fetchRadioUrl]);
 
   const pingServer = useCallback(async (initial: boolean) => {
     try {
@@ -56,7 +47,12 @@ const RadioScreen = props => {
   }, [ping, radioUrl, setConnected, setPlayingId]);
 
   useEffect(() => {
-    if (radioUrl) {
+    fetchRadioUrl()
+    loadTracks();
+  }, [dispatch, loadTracks, fetchRadioUrl]);
+
+  useEffect(() => {
+    if (radioUrl !== '') {
       pingServer(true);
     }
   }, [radioUrl, pingServer]);

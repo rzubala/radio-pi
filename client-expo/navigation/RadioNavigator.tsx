@@ -56,7 +56,7 @@ const tabBarScreenOptions = ({ route }) => ({
     let iconName;
 
     if (route.name === "Radio") {
-      iconName = focused ? "md-radio" : "ios-radio";
+      iconName = focused ? "md-radio" : "md-radio";
     } else if (route.name === "Settings") {
       iconName = focused ? "ios-list-box" : "ios-list";
     }
@@ -73,7 +73,7 @@ export const RadioNavigator = () => {
         activeBackgroundColor: Platform.OS == 'android' ? Colors.primary : "",
         inactiveBackgroundColor: Platform.OS == 'android' ? Colors.primary : "",
         activeTintColor: Platform.OS == 'android' ? "white" : Colors.primary,
-        inactiveTintColor: Colors.accent
+        inactiveTintColor: Colors.inactive
       }}
     >
       <RadioNavigatorTab.Screen name="Radio" component={RadioStackNavigator} />

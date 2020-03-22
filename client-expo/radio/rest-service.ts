@@ -1,3 +1,11 @@
+export const restart = (radioUrl: string) => {
+  return getToRadio(radioUrl, "restart");
+};
+
+export const shutdown = (radioUrl: string) => {
+  return getToRadio(radioUrl, "shutdown");
+};
+
 export const play = async (radioUrl: string) => {
   getToRadio(radioUrl, "play");
 };
