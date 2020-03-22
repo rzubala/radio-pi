@@ -20,7 +20,7 @@ const RadioScreen = props => {
   const dispatch = useDispatch();
 
   const loadTracks = useCallback(() => {
-    dispatch(trackActions.fetchTracks());
+    dispatch(trackActions.loadTracks());
   }, [dispatch]);
 
   const fetchRadioUrl = useCallback(() => {
