@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { FlatList, View, StyleSheet } from "react-native";
+import { FlatList, View, StyleSheet, Platform } from "react-native";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import HeaderButton from "../components/UI/HeaderButton";
 
 import TrackListItem from "../components/TrackListItem";
 import Track from "../models/track";
@@ -20,7 +22,9 @@ const TracksOverviewScreen = props => {
   }, [loadTracks]);
 
   const onItemSelected = (track: Track) => {
-    props.navigation.navigate("EditTrack");
+    props.navigation.navigate("EditTrack", {
+        item: track
+    });
   };
 
   return (
@@ -53,9 +57,20 @@ const styles = StyleSheet.create({
   playlistContainer: {}
 });
 
-export const screenOptions = props => {
+export const screenOptions = navigationData => {
   return {
-    headerTitle: "Streams"
+    headerTitle: "Streams",
+    headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={HeaderButton}>
+          <Item
+            title="Add"
+            iconName={Platform.OS === "android" ? "md-create" : "ios-create"}
+            onPress={() => {
+              navigationData.navigation.navigate("EditTrack");
+            }}
+          />
+        </HeaderButtons>
+      )    
   };
 };
 

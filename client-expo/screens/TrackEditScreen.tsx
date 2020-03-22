@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useReducer } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
 const TrackEditScreen = props => {
+  const track = props.route.params ? props.route.params.track : null;
+
   return (
     <View style={styles.screen}>
       <Text>Track Edit Screen</Text>
@@ -16,9 +18,9 @@ const styles = StyleSheet.create({
 });
 
 export const screenOptions = props => {
-    return {
-      headerTitle: "Edit screen"
-    };
+  return {
+    headerTitle: "Edit screen"
   };
+};
 
 export default TrackEditScreen;
