@@ -1,25 +1,30 @@
-import React, { useCallback, useEffect} from 'react'
+import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { FlatList, View, StyleSheet} from 'react-native'
+import { FlatList, View, StyleSheet } from "react-native";
 
-import TrackListItem from '../components/TrackListItem'
-import Track from '../models/track'
+import TrackListItem from "../components/TrackListItem";
+import Track from "../models/track";
 import * as trackActions from "../store/actions/tracks";
 
 const TracksOverviewScreen = props => {
-    const tracks = useSelector(state => state.tracks.tracks);
+  const tracks = useSelector(state => state.tracks.tracks);
 
-    const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-    const loadTracks = useCallback(() => {
-        dispatch(trackActions.loadTracks());
-    }, [dispatch])
+  const loadTracks = useCallback(() => {
+    dispatch(trackActions.loadTracks());
+  }, [dispatch]);
 
-    useEffect(() => {
-        loadTracks();
-      }, [loadTracks]);
+  useEffect(() => {
+    loadTracks();
+  }, [loadTracks]);
 
-    return <View style={styles.screen}>
+  const onItemSelected = (track: Track) => {
+    props.navigation.navigate("EditTrack");
+  };
+
+  return (
+    <View style={styles.screen}>
       <View style={styles.playlistContainer}>
         <FlatList
           keyExtractor={(item: Track) => item.id}
@@ -29,27 +34,29 @@ const TracksOverviewScreen = props => {
               <TrackListItem
                 name={itemData.item.name}
                 image={itemData.item.logoUrl}
-                onSelect={() => {}}
+                onSelect={() => {
+                  onItemSelected(itemData.item);
+                }}
               />
             );
           }}
         />
       </View>
     </View>
-}
+  );
+};
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1
-    },
-    playlistContainer: {
-    }
-})
+  screen: {
+    flex: 1
+  },
+  playlistContainer: {}
+});
 
 export const screenOptions = props => {
-    return {
-      headerTitle: "Streams"
-    };
+  return {
+    headerTitle: "Streams"
   };
+};
 
-export default TracksOverviewScreen
+export default TracksOverviewScreen;

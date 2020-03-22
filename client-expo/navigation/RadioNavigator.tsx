@@ -17,6 +17,7 @@ import SettingsScreen, {
 import TracksOverviewScreen, {
   screenOptions as tracksOverviewScreenOptions
 } from "../screens/TracksOverviewScreen";
+import TrackEditScreen, { screenOptions as trackEditScreenOptions } from '../screens/TrackEditScreen'
 
 const defaultNavOptions: StackNavigationOptions = {
   headerStyle: {
@@ -62,6 +63,7 @@ export const TracksOverviewNavigator = props => {
   return (
     <TracksNavigatorStack.Navigator screenOptions={defaultNavOptions}>
       <TracksNavigatorStack.Screen name="Tracks" component={TracksOverviewScreen} options={tracksOverviewScreenOptions}/>
+      <TracksNavigatorStack.Screen name="EditTrack" component={TrackEditScreen} options={trackEditScreenOptions}/>
     </TracksNavigatorStack.Navigator>
   );
 };
