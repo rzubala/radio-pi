@@ -1,6 +1,6 @@
 import React from "react";
 import { Platform } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, StackNavigationOptions } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -12,7 +12,7 @@ import SettingsScreen, {
   screenOptions as SettingsScreenOptions
 } from "../screens/SettingsScreen";
 
-const defaultNavOptions = {
+const defaultNavOptions: StackNavigationOptions = {
   headerStyle: {
     backgroundColor: Platform.OS === "android" ? Colors.primary : ""
   },
@@ -20,7 +20,7 @@ const defaultNavOptions = {
     fontWeight: "bold"
   },
   headerBackTitleStyle: {
-    fontWeight: "regular"
+    fontWeight: "normal"
   },
   headerTintColor: Platform.OS === "android" ? "white" : Colors.primary
 };
@@ -32,7 +32,7 @@ export const RadioStackNavigator = props => {
       <RadioNavigatorStack.Screen
         name="RadioScreen"
         component={RadioScreen}
-        screenOptions={RadioScreenOptions}
+        options={RadioScreenOptions}
       />
     </RadioNavigatorStack.Navigator>
   );
@@ -45,7 +45,7 @@ export const SettingsStackNavigator = props => {
       <SettingsNavigatorStack.Screen
         name="SettingsScreen"
         component={SettingsScreen}
-        screenOptions={SettingsScreenOptions}
+        options={SettingsScreenOptions}
       />
     </SettingsNavigatorStack.Navigator>
   );

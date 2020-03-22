@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
 
 export const screenOptions = props => {
   return {
-    headerTitle: "Radion"
+    headerTitle: "Radio"
   };
 };
 
