@@ -57,6 +57,13 @@ const RadioScreen = props => {
     }
   }, [radioUrl, pingServer]);
 
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener("focus", loadTracks);
+    return () => {
+      unsubscribe();
+    };
+  }, [loadTracks]);
+
   const playHandler = async (stream: string, id: string) => {
     pingServer(false);
     if (!connected) {

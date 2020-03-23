@@ -1,15 +1,20 @@
-import React, { useReducer, useCallback } from "react";
+import React, { useReducer, useCallback, useEffect, useState } from "react";
 import {
   View,
-  Text,
-  TextInput,
   StyleSheet,
   KeyboardAvoidingView,
-  ScrollView
+  ScrollView,
+  Platform,
+  Alert,
+  ActivityIndicator
 } from "react-native";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
+import * as tracksActions from '../store/actions/tracks'
 import Track from "../models/track";
 import Input from "../components/UI/Input";
+import HeaderButton from "../components/UI/HeaderButton";
+import { Colors } from '../constants/colors'
 
 const FORM_INPUT_UPDATE = "UPDATE";
 const formReducer = (state, action) => {
@@ -36,6 +41,8 @@ const formReducer = (state, action) => {
 };
 
 const TrackEditScreen = props => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const track: Track = props.route.params ? props.route.params.item : null;
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
@@ -64,11 +71,60 @@ const TrackEditScreen = props => {
     [dispatchFormState]
   );
 
+  const submitHandler = useCallback(async () => {
+    if (!formState.formIsValid) {
+      Alert.alert("Wrong input!", "Please check the errors in the form.", [
+        { text: "OK" }
+      ]);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      if (track) {
+        await tracksActions.updateTrack(track.id, formState.inputValues.name, formState.inputValues.logoUrl, formState.inputValues.streamUrl)
+      } else {
+        await tracksActions.insertTrack(formState.inputValues.name, formState.inputValues.logoUrl, formState.inputValues.streamUrl)
+      }
+      props.navigation.goBack();
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsLoading(false);
+  }, [formState]);
+
+  useEffect(() => {
+    props.navigation.setOptions({
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={HeaderButton}>
+          <Item
+            title="Save"
+            iconName={
+              Platform.OS === "android" ? "md-checkmark" : "ios-checkmark"
+            }
+            onPress={submitHandler}
+          />
+        </HeaderButtons>
+      )
+    });
+  }, [submitHandler]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("An error occured!", error, [{ text: "OK" }]);
+    }
+  }, [error]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
   return (
-    <KeyboardAvoidingView
-      style={styles.screen}
-      behavior="padding"      
-    >
+    <KeyboardAvoidingView style={styles.screen} behavior="padding">
       <ScrollView>
         <View style={styles.form}>
           <Input
@@ -94,7 +150,7 @@ const TrackEditScreen = props => {
             keyboardType="default"
             returnKeyType="next"
             required
-          />          
+          />
           <Input
             label="Logo Url"
             id="logoUrl"
@@ -125,9 +181,12 @@ const styles = StyleSheet.create({
   }
 });
 
-export const screenOptions = props => {
+export const screenOptions = navData => {
+  const routeParams = navData.route.params ? navData.route.params : {}
   return {
-    headerTitle: "Edit screen"
+    headerTitle: routeParams.item
+    ? "Edit track"
+    : "Add track",
   };
 };
 

@@ -21,6 +21,13 @@ const TracksOverviewScreen = props => {
     loadTracks();
   }, [loadTracks]);
 
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener("focus", loadTracks);
+    return () => {
+      unsubscribe();
+    };
+  }, [loadTracks]);
+
   const onItemSelected = (track: Track) => {
     props.navigation.navigate("EditTrack", {
         item: track

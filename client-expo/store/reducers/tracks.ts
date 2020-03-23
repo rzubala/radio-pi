@@ -1,4 +1,3 @@
-import { Tracks as InitialTracks } from '../../data/initial_data'
 import Track from '../../models/track'
 
 import { FETCH_TRACKS } from '../actions/tracks'
@@ -10,10 +9,7 @@ const initialState = {
 export default (state = initialState, action) => {
     switch (action.type) {
         case FETCH_TRACKS:
-            let dbTracks: Track[] = action.tracks
-            if (!dbTracks || dbTracks.length === 0) {
-                dbTracks = InitialTracks
-            }
+            let dbTracks: Track[] = action.tracks.map(item => new Track(item.id.toString(), item.name, item.streamUri, item.imageUri))
             return {
                 ...state,
                 tracks: dbTracks
