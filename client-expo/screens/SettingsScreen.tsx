@@ -1,17 +1,29 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Text, View, StyleSheet, Alert, Slider } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Alert,
+  Slider,
+  KeyboardAvoidingView
+} from "react-native";
 import { Colors } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 
+import Input from "../components/UI/Input";
 import MainButton from "../components/UI/MainButton";
 import * as configActions from "../store/actions/config";
-import { restart, shutdown, setVolume as setServiceVolume } from "../radio/rest-service";
+import {
+  restart,
+  shutdown,
+  setVolume as setServiceVolume
+} from "../radio/rest-service";
 
 const SettingsScreen = props => {
   const [newUrl, setNewUrl] = useState("");
-  const [volume, setVolume] = useState(100)
+  const [urlFetched, setUrlFetchedUrl] = useState(false);
+  const [volume, setVolume] = useState(100);
   const storedIpAddress = useSelector(state => state.config.ip);
 
   const dispatch = useDispatch();
@@ -22,11 +34,17 @@ const SettingsScreen = props => {
 
   useEffect(() => {
     fetchIpAddress();
-    setNewUrl(storedIpAddress);
   }, [fetchIpAddress]);
 
-  const onIpAddressChanged = value => {
-    setNewUrl(value);
+  useEffect(() => {
+    if (storedIpAddress) {
+      setNewUrl(storedIpAddress);
+      setUrlFetchedUrl(true)
+    }
+  }, [setUrlFetchedUrl, setNewUrl, storedIpAddress]);
+
+  const onIpAddressChanged = (_, inputValue) => {
+    setNewUrl(inputValue);
   };
 
   const saveConfig = () => {
@@ -43,11 +61,9 @@ const SettingsScreen = props => {
   const sendCommand = useCallback(
     async method => {
       try {
-        console.log('send before')
         const result = await method();
-        console.log('send after')
       } catch (err) {
-        console.log('send err', err)
+        console.log("send err", err);
         displayAlert();
       }
     },
@@ -62,60 +78,69 @@ const SettingsScreen = props => {
     sendCommand(() => shutdown(storedIpAddress));
   };
 
-  const onValueChangeHandler = (value: number) => {    
-    sendCommand(() => setServiceVolume(storedIpAddress, value))
-  }
+  const onValueChangeHandler = (value: number) => {
+    sendCommand(() => setServiceVolume(storedIpAddress, value));
+  };
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.formControl}>
-        <Text style={styles.label}>Radio service url:</Text>
-        <TextInput
-          style={styles.input}
-          value={newUrl}
-          onChangeText={onIpAddressChanged}
-        />
-        <View style={styles.saveButton}>
-          <MainButton
-            onPress={saveConfig}
-            buttonStyle={{ paddingHorizontal: 50 }}
-          >
-            <Ionicons name="md-save" size={24} color="white" />
-          </MainButton>
+    <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+      <View style={styles.screen}>
+        <View style={styles.formControl}>
+          {urlFetched && <Input
+            label="Radio service url:"
+            id="url"
+            initialValue={newUrl}
+            initiallyValid={true}
+            onInputChange={onIpAddressChanged}
+            errorText="Please enter a valid stream url"
+            keyboardType="default"
+            autoCapitalize="sentences"
+            autoCorrect
+            required
+          />}
+          <View style={styles.saveButton}>
+            <MainButton
+              onPress={saveConfig}
+              buttonStyle={{ paddingHorizontal: 50 }}
+            >
+              <Ionicons name="md-save" size={24} color="white" />
+            </MainButton>
+          </View>
+          <View style={styles.volumeContainer}>
+            <Text style={styles.label}>Volume:</Text>
+            <Slider
+              style={styles.slider}
+              minimumValue={70}
+              maximumValue={100}
+              step={1}
+              value={volume}
+              onValueChange={onValueChangeHandler}
+              minimumTrackTintColor={Colors.accent}
+              maximumTrackTintColor={Colors.inactive}
+              thumbTintColor={Colors.primary}
+            />
+          </View>
         </View>
-        <View style={styles.volumeContainer}>
-        <Text style={styles.label}>Volume:</Text>
-          <Slider style={styles.slider}            
-            minimumValue={70}
-            maximumValue={100}
-            step={1}
-            value={volume}
-            onValueChange={onValueChangeHandler}
-            minimumTrackTintColor={Colors.accent}
-            maximumTrackTintColor={Colors.inactive}
-            thumbTintColor={Colors.primary}
-          />
+        <View style={styles.buttons}>
+          <View style={styles.actionButton}>
+            <MainButton
+              buttonStyle={{ backgroundColor: Colors.accent }}
+              onPress={onRestartHandler}
+            >
+              Restart
+            </MainButton>
+          </View>
+          <View style={styles.actionButton}>
+            <MainButton
+              buttonStyle={{ backgroundColor: Colors.alert }}
+              onPress={onShutdownHandler}
+            >
+              Shutdown
+            </MainButton>
+          </View>
         </View>
       </View>
-      <View style={styles.buttons}>
-        <View style={styles.actionButton}>
-          <MainButton
-            buttonStyle={{ backgroundColor: Colors.accent }}
-            onPress={onRestartHandler}
-          >
-            Restart
-          </MainButton>
-        </View>
-        <View style={styles.actionButton}>
-          <MainButton
-            buttonStyle={{ backgroundColor: Colors.alert }}
-            onPress={onShutdownHandler}
-          >
-            Shutdown
-          </MainButton>
-        </View>
-      </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -127,7 +152,7 @@ const styles = StyleSheet.create({
     height: "100%",
     padding: 20
   },
-  formControl: {    
+  formControl: {
     width: "100%"
   },
   label: {
@@ -146,7 +171,7 @@ const styles = StyleSheet.create({
     width: "100%"
   },
   volumeContainer: {
-    width: "100%",
+    width: "100%"
   },
   slider: {
     width: "100%",
