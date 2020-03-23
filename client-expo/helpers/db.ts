@@ -105,3 +105,22 @@ export const deleteTracks = () => {
   });
   return promise
 };
+
+export const deleteTrack = (id) => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "delete from tracks where id = ?;",
+        [id],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err);
+          return false;
+        }
+      );
+    });
+  });
+  return promise
+};

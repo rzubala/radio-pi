@@ -1,11 +1,13 @@
 export const FETCH_TRACKS = "FETCH_TRACKS";
+export const DELETE_TRACK = "DELETE_TRACK"
 
 import {
   init,
   insertTrack as insertTrackDb,
   updateTrack as updateTrackDb,
   fetchTracks,
-  deleteTracks
+  deleteTracks,
+  deleteTrack as deleteTrackDb
 } from "../../helpers/db";
 import { Tracks as InitialTracks } from "../../data/initial_data";
 import Track from "../../models/track";
@@ -30,6 +32,13 @@ export const loadTracks = () => {
     }
   };
 };
+
+export const deleteTrack = (id) => {
+  return async dispatch => {
+    await deleteTrackDb(id)
+    dispatch({ type: DELETE_TRACK, tid: id });
+  }
+}
 
 const createDefaults = async () => {
   for (const track of InitialTracks) {
@@ -56,3 +65,4 @@ export const updateTrack = async (id, name, logo, stream) => {
     throw err;
   }
 };
+

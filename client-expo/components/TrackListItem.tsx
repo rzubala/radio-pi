@@ -28,6 +28,9 @@ const TrackListItem = props => {
             <View style={styles.details}>
                 <Text style={styles.trackName}>{props.name}</Text>
             </View>
+            <View style={styles.actions}>
+                {props.children}
+            </View>
           </View>
         </TouchableComponent>
       </View>
@@ -50,7 +53,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   imageContainer: {
-    width: "50%",
+    width: "40%",
     height: "100%",
     paddingVertical: 5,
     borderTopLeftRadius: 10,
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   details: {
-    width: "50%",
+    width: "40%",
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10
@@ -72,7 +75,13 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     color: Colors.primary,
     fontWeight: 'bold'
-  }
+  },
+  actions: {
+    width: "20%",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 5
+},
 });
 
 export default TrackListItem;

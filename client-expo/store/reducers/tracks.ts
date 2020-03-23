@@ -1,19 +1,32 @@
-import Track from '../../models/track'
+import Track from "../../models/track";
 
-import { FETCH_TRACKS } from '../actions/tracks'
+import { FETCH_TRACKS, DELETE_TRACK } from "../actions/tracks";
 
 const initialState = {
-    tracks: []
-}
+  tracks: []
+};
 
 export default (state = initialState, action) => {
-    switch (action.type) {
-        case FETCH_TRACKS:
-            let dbTracks: Track[] = action.tracks.map(item => new Track(item.id.toString(), item.name, item.streamUri, item.imageUri))
-            return {
-                ...state,
-                tracks: dbTracks
-            }
-    }
-    return state
-}
+  switch (action.type) {
+    case FETCH_TRACKS:
+      let dbTracks: Track[] = action.tracks.map(
+        item =>
+          new Track(
+            item.id.toString(),
+            item.name,
+            item.streamUri,
+            item.imageUri
+          )
+      );
+      return {
+        ...state,
+        tracks: dbTracks
+      };
+    case DELETE_TRACK:      
+      return {
+        ...state,
+        tracks: state.tracks.filter(t => t.id !== action.tid)
+      };
+  }
+  return state;
+};

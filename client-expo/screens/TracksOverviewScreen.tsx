@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { FlatList, View, StyleSheet, Platform } from "react-native";
+import { FlatList, View, StyleSheet, Platform, Button, Alert } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/UI/HeaderButton";
 
+import { Colors } from '../constants/colors'
 import TrackListItem from "../components/TrackListItem";
 import Track from "../models/track";
 import * as trackActions from "../store/actions/tracks";
@@ -34,6 +35,19 @@ const TracksOverviewScreen = props => {
     });
   };
 
+  const deleteHandler = id => {
+    Alert.alert("Are you sure?", "Do you want to delete?", [
+      { text: "No", style: "default" },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: () => {
+          dispatch(trackActions.deleteTrack(id));
+        }
+      }
+    ]);
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.playlistContainer}>
@@ -48,7 +62,13 @@ const TracksOverviewScreen = props => {
                 onSelect={() => {
                   onItemSelected(itemData.item);
                 }}
-              />
+              >
+                <Button
+                  color={Colors.alert}
+                  title="Delete"
+                  onPress={() => deleteHandler(itemData.item.id)}
+                />                                
+              </TrackListItem>
             );
           }}
         />
