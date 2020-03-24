@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   details: {
-    width: "40%",
+    width: "45%",
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   actions: {
-    width: "20%",
+    width: "15%",
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 5

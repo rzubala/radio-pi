@@ -1,10 +1,20 @@
 import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { FlatList, View, StyleSheet, Platform, Button, Alert } from "react-native";
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  Platform,
+  Button,
+  Alert
+} from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import HeaderButton from "../components/UI/HeaderButton";
+import { Ionicons } from "@expo/vector-icons";
 
-import { Colors } from '../constants/colors'
+import HeaderButton from "../components/UI/HeaderButton";
+import MainButton from "../components/UI/MainButton";
+
+import { Colors } from "../constants/colors";
 import TrackListItem from "../components/TrackListItem";
 import Track from "../models/track";
 import * as trackActions from "../store/actions/tracks";
@@ -31,7 +41,7 @@ const TracksOverviewScreen = props => {
 
   const onItemSelected = (track: Track) => {
     props.navigation.navigate("EditTrack", {
-        item: track
+      item: track
     });
   };
 
@@ -63,11 +73,12 @@ const TracksOverviewScreen = props => {
                   onItemSelected(itemData.item);
                 }}
               >
-                <Button
-                  color={Colors.alert}
-                  title="Delete"
-                  onPress={() => deleteHandler(itemData.item.id)}
-                />                                
+                <MainButton
+                  onPress={() => deleteHandler(itemData.item.id)}                  
+                  buttonStyle={{ backgroundColor: Colors.accent, paddingVertical: 5, paddingHorizontal: 10 }}
+                >
+                  <Ionicons name="md-remove" size={24} color="white" />
+                </MainButton>
               </TrackListItem>
             );
           }}
@@ -88,16 +99,16 @@ export const screenOptions = navigationData => {
   return {
     headerTitle: "Streams",
     headerRight: () => (
-        <HeaderButtons HeaderButtonComponent={HeaderButton}>
-          <Item
-            title="Add"
-            iconName={Platform.OS === "android" ? "md-create" : "ios-create"}
-            onPress={() => {
-              navigationData.navigation.navigate("EditTrack");
-            }}
-          />
-        </HeaderButtons>
-      )    
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Add"
+          iconName={Platform.OS === "android" ? "md-create" : "ios-create"}
+          onPress={() => {
+            navigationData.navigation.navigate("EditTrack");
+          }}
+        />
+      </HeaderButtons>
+    )
   };
 };
 
