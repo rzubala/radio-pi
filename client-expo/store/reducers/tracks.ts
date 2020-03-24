@@ -1,6 +1,6 @@
 import Track from "../../models/track";
 
-import { FETCH_TRACKS, DELETE_TRACK } from "../actions/tracks";
+import { FETCH_TRACKS, DELETE_TRACK, CREATE_DEFAULTS } from "../actions/tracks";
 
 const initialState = {
   tracks: []
@@ -22,11 +22,16 @@ export default (state = initialState, action) => {
         ...state,
         tracks: dbTracks
       };
-    case DELETE_TRACK:      
+    case DELETE_TRACK:
       return {
         ...state,
         tracks: state.tracks.filter(t => t.id !== action.tid)
       };
+    case CREATE_DEFAULTS:
+      return {
+        ...state,
+        tracks: action.tracks
+      }
   }
   return state;
 };

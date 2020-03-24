@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { View, StyleSheet, Alert, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  FlatList,
+  ActivityIndicator
+} from "react-native";
 
 import * as trackActions from "../store/actions/tracks";
-import * as configActions from '../store/actions/config'
+import * as configActions from "../store/actions/config";
 import MainButton from "../components/UI/MainButton";
 import { Colors } from "../constants/colors";
 import { play, stop, addToPlaylist, ping } from "../radio/rest-service";
@@ -13,7 +19,8 @@ import TrackListItem from "../components/TrackListItem";
 const RadioScreen = props => {
   const [connected, setConnected] = useState(false);
   const [playingId, setPlayingId] = useState("");
-  const radioUrl = useSelector(state => state.config.ip)
+  const [waitForStreams, setWaitForStreams] = useState(false)
+  const radioUrl = useSelector(state => state.config.ip);
 
   const tracks = useSelector(state => state.tracks.tracks);
 
@@ -27,32 +34,40 @@ const RadioScreen = props => {
     dispatch(configActions.getConfig());
   }, [dispatch]);
 
-  const pingServer = useCallback(async (initial: boolean) => {
-    try {
-      const pingData = await ping(radioUrl);
-      if (initial && pingData && pingData.streamId) {
-        setPlayingId(pingData.streamId)        
+  const pingServer = useCallback(
+    async (initial: boolean) => {
+      try {
+        const pingData = await ping(radioUrl);
+        if (initial && pingData && pingData.streamId) {
+          setPlayingId(pingData.streamId);
+        }
+        setConnected(true);
+      } catch (err) {
+        setConnected(false);
+        Alert.alert(
+          "Error",
+          `No connection to radio: ${radioUrl}`,
+          [
+            { text: "Try again", onPress: () => pingServer(initial) },
+            {
+              text: "Change address",
+              onPress: () => props.navigation.navigate("Settings")
+            }
+          ],
+          { cancelable: false }
+        );
       }
-      setConnected(true);
-    } catch (err) {
-      setConnected(false);
-      Alert.alert(
-        "Error",
-        `No connection to radio: ${radioUrl}`,
-        [{ text: "Try again", onPress: () => pingServer(initial) },
-        { text: "Change address", onPress: () => props.navigation.navigate("Settings") }],
-        { cancelable: false }
-      );
-    }
-  }, [ping, radioUrl, setConnected, setPlayingId]);
+    },
+    [ping, radioUrl, setConnected, setPlayingId]
+  );
 
   useEffect(() => {
-    fetchRadioUrl()
+    fetchRadioUrl();
     loadTracks();
   }, [dispatch, loadTracks, fetchRadioUrl]);
 
   useEffect(() => {
-    if (radioUrl !== '') {
+    if (radioUrl !== "") {
       pingServer(true);
     }
   }, [radioUrl, pingServer]);
@@ -83,6 +98,26 @@ const RadioScreen = props => {
     await stop(radioUrl);
     setPlayingId(null);
   };
+
+  const onAddDefaultsHandler = () => {
+    dispatch(trackActions.createDefaultTracks())
+    setWaitForStreams(true)
+  }
+
+  if (tracks.length === 0) {
+    return (
+      <View style={{...styles.screen, justifyContent: 'center'}}>
+        {waitForStreams 
+        ? <ActivityIndicator size="large" color={Colors.primary} />
+        : <MainButton
+          buttonStyle={{ backgroundColor: Colors.accent }}
+          onPress={onAddDefaultsHandler}
+        >
+          Add streams
+        </MainButton>}
+      </View>
+    );
+  }
 
   return (
     <View style={styles.screen}>
@@ -144,6 +179,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     height: "100%",
     justifyContent: "flex-end"
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
   }
 });
 

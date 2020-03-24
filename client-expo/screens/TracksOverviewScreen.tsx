@@ -75,7 +75,7 @@ const TracksOverviewScreen = props => {
               >
                 <MainButton
                   onPress={() => deleteHandler(itemData.item.id)}                  
-                  buttonStyle={{ backgroundColor: Colors.accent, paddingVertical: 5, paddingHorizontal: 10 }}
+                  buttonStyle={{ backgroundColor: Colors.alert, paddingVertical: 5, paddingHorizontal: 10 }}
                 >
                   <Ionicons name="md-remove" size={24} color="white" />
                 </MainButton>

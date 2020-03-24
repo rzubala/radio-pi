@@ -1,5 +1,6 @@
 export const FETCH_TRACKS = "FETCH_TRACKS";
 export const DELETE_TRACK = "DELETE_TRACK"
+export const CREATE_DEFAULTS = "CREATE_DEFAULTS"
 
 import {
   init,
@@ -17,21 +18,32 @@ export const loadTracks = () => {
     try {
       const initResult = await init();
       //await deleteTracks()
-      let dbResult = await fetchTracks();
-      let dbTracks: Track[] = dbResult.rows._array;
-      if (!dbTracks || dbTracks.length === 0) {
-        console.log("create defaults");
-        await createDefaults();
-        dbResult = await fetchTracks();
-        dbTracks = dbResult.rows._array;
-      }
-
+      const dbResult = await fetchTracks();
+      const dbTracks: Track[] = dbResult.rows._array;
+      // if (!dbTracks || dbTracks.length === 0) {
+      //   console.log("create defaults");
+      //   await createDefaults();
+      //   dbResult = await fetchTracks();
+      //   dbTracks = dbResult.rows._array;
+      // }
       dispatch({ type: FETCH_TRACKS, tracks: dbTracks });
     } catch (err) {
       throw err;
     }
   };
 };
+
+export const createDefaultTracks = () => {
+  return async dispatch => {
+    try {
+        console.log("create defaults");
+        await createDefaults();
+        dispatch({type: CREATE_DEFAULTS, tracks: InitialTracks})
+    } catch (err) {
+      throw err
+    }
+  }
+}
 
 export const deleteTrack = (id) => {
   return async dispatch => {
