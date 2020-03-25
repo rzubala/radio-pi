@@ -23,7 +23,7 @@ export const addToPlaylist = async (
     track: streamUrl,
     streamId: streamId
   };
-  postToRadio(radioUrl, "add", data);
+  return postToRadio(radioUrl, "add", data);
 };
 
 export const setVolume = (radioUrl: string, volume: number) => {
