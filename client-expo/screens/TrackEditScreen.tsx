@@ -6,15 +6,16 @@ import {
   ScrollView,
   Platform,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  Share
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
-import * as tracksActions from '../store/actions/tracks'
+import * as tracksActions from "../store/actions/tracks";
 import Track from "../models/track";
 import Input from "../components/UI/Input";
 import HeaderButton from "../components/UI/HeaderButton";
-import { Colors } from '../constants/colors'
+import { Colors } from "../constants/colors";
 
 const FORM_INPUT_UPDATE = "UPDATE";
 const formReducer = (state, action) => {
@@ -71,6 +72,25 @@ const TrackEditScreen = props => {
     [dispatchFormState]
   );
 
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `name: ${track.name}\n\nstream: ${track.url}\n\nlogo: ${track.logoUrl}`          
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   const submitHandler = useCallback(async () => {
     if (!formState.formIsValid) {
       Alert.alert("Wrong input!", "Please check the errors in the form.", [
@@ -82,9 +102,18 @@ const TrackEditScreen = props => {
     setError(null);
     try {
       if (track) {
-        await tracksActions.updateTrack(track.id, formState.inputValues.name, formState.inputValues.logoUrl, formState.inputValues.streamUrl)
+        await tracksActions.updateTrack(
+          track.id,
+          formState.inputValues.name,
+          formState.inputValues.logoUrl,
+          formState.inputValues.streamUrl
+        );
       } else {
-        await tracksActions.insertTrack(formState.inputValues.name, formState.inputValues.logoUrl, formState.inputValues.streamUrl)
+        await tracksActions.insertTrack(
+          formState.inputValues.name,
+          formState.inputValues.logoUrl,
+          formState.inputValues.streamUrl
+        );
       }
       props.navigation.goBack();
     } catch (err) {
@@ -97,6 +126,13 @@ const TrackEditScreen = props => {
     props.navigation.setOptions({
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
+          {track && (
+            <Item
+              title="Share"
+              iconName={Platform.OS === "android" ? "md-share" : "ios-share"}
+              onPress={onShare}
+            />
+          )}
           <Item
             title="Save"
             iconName={
@@ -182,11 +218,9 @@ const styles = StyleSheet.create({
 });
 
 export const screenOptions = navData => {
-  const routeParams = navData.route.params ? navData.route.params : {}
+  const routeParams = navData.route.params ? navData.route.params : {};
   return {
-    headerTitle: routeParams.item
-    ? "Edit track"
-    : "Add track",
+    headerTitle: routeParams.item ? "Edit track" : "Add track"
   };
 };
 
