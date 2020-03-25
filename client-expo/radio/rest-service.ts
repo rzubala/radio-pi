@@ -7,11 +7,11 @@ export const shutdown = (radioUrl: string) => {
 };
 
 export const play = async (radioUrl: string) => {
-  getToRadio(radioUrl, "play");
+  return getToRadio(radioUrl, "play");
 };
 
 export const stop = async (radioUrl: string) => {
-  getToRadio(radioUrl, "stop");
+  return getToRadio(radioUrl, "stop");
 };
 
 export const addToPlaylist = async (
