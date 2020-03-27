@@ -7,6 +7,7 @@ import {
   FlatList,
   ActivityIndicator
 } from "react-native";
+import NetInfo from '@react-native-community/netinfo';
 
 import * as trackActions from "../store/actions/tracks";
 import * as configActions from "../store/actions/config";
@@ -29,6 +30,21 @@ const RadioScreen = props => {
   const loadTracks = useCallback(() => {
     dispatch(trackActions.loadTracks());
   }, [dispatch]);
+
+  const checkNetwork = useCallback(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (state.type !== 'wifi' || !state.isConnected) {
+        Alert.alert("Network error!", "Please check your WiFi connection.", [
+          { text: "OK" }
+        ]);
+      }
+    });
+    unsubscribe();
+  }, [])
+
+  useEffect(() => {
+    checkNetwork()
+  }, [checkNetwork])
 
   const fetchRadioUrl = useCallback(() => {
     dispatch(configActions.getConfig());
