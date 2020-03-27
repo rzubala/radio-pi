@@ -7,7 +7,8 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
-  Share
+  Share,
+  Clipboard
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
@@ -18,6 +19,8 @@ import HeaderButton from "../components/UI/HeaderButton";
 import { Colors } from "../constants/colors";
 
 const FORM_INPUT_UPDATE = "UPDATE";
+const FORM_TO_SET_UPDATE = "FORM_TO_SET_UPDATE"
+
 const formReducer = (state, action) => {
   if (action.type === FORM_INPUT_UPDATE) {
     const updatedValues = {
@@ -32,12 +35,26 @@ const formReducer = (state, action) => {
     for (const key in updatedValidaties) {
       updatedFormIsValid = updatedFormIsValid && updatedValidaties[key];
     }
+    const toSetValues = {
+      ...state.toSet,
+      [action.input]: action.toSet
+    }
     return {
       formIsValid: updatedFormIsValid,
       inputValues: updatedValues,
-      inputValidities: updatedValidaties
+      inputValidities: updatedValidaties,
+      toSet: toSetValues
     };
-  }
+  } else if (action.type === FORM_TO_SET_UPDATE) {
+    const toSetValues = {
+      ...state.toSet,
+      [action.input]: action.toSet
+    }
+    return {
+      ...state,
+      toSet: toSetValues
+    }
+  }  
   return state;
 };
 
@@ -52,6 +69,11 @@ const TrackEditScreen = props => {
       logoUrl: track ? track.logoUrl : "",
       streamUrl: track ? track.url : ""
     },
+    toSet: {
+      name: '',
+      logoUrl: '',
+      streamUrl: ''
+    },
     inputValidities: {
       name: track ? true : false,
       logoUrl: track ? true : false,
@@ -61,12 +83,13 @@ const TrackEditScreen = props => {
   });
 
   const inputChangeHandler = useCallback(
-    (inputIdentifier, inputValue, isValidity) => {
+    (inputIdentifier, inputValue, isValidity, toSetValue) => {
       dispatchFormState({
         type: FORM_INPUT_UPDATE,
         value: inputValue,
         isValid: isValidity,
-        input: inputIdentifier
+        input: inputIdentifier,
+        toSet: toSetValue
       });
     },
     [dispatchFormState]
@@ -75,7 +98,7 @@ const TrackEditScreen = props => {
   const onShare = async () => {
     try {
       const result = await Share.share({
-        message: `name: ${track.name}\n\nstream: ${track.url}\n\nlogo: ${track.logoUrl}`          
+        message: `name:${track.name};stream:${track.url};logo:${track.logoUrl}`          
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -122,6 +145,44 @@ const TrackEditScreen = props => {
     setIsLoading(false);
   }, [formState]);
 
+  const onImportFromClipboard = async () => {
+    const value = await Clipboard.getString()
+    if (value.length === 0) {
+      Alert.alert("Wrong input!", "Clipboard does not contain valid stream data", [
+        { text: "OK" }
+      ]);
+      return;
+    }
+    const regex = /name:([^;]+);stream:([^;]+);logo:(.*)/gm;
+    let m;
+    while ((m = regex.exec(value)) !== null) {
+        if (m.index === regex.lastIndex) {
+            regex.lastIndex++;
+        }
+        m.forEach((match, groupIndex) => {
+            let input = null
+            switch (groupIndex) {
+            case 1:
+              input = 'name'
+              break;
+            case 2:
+              input = 'streamUrl'
+              break;
+            case 3:
+              input = 'logoUrl'
+              break;
+            }
+            if (input) {
+              dispatchFormState({
+                type: FORM_TO_SET_UPDATE,
+                input: input,
+                toSet: match
+              });
+            }
+        });
+    }
+  }
+
   useEffect(() => {
     props.navigation.setOptions({
       headerRight: () => (
@@ -133,17 +194,22 @@ const TrackEditScreen = props => {
               onPress={onShare}
             />
           )}
+          {!track && (
+            <Item
+            title="Share"
+            iconName={Platform.OS === "android" ? "md-clipboard" : "ios-clipboard"}
+            onPress={onImportFromClipboard}
+          />
+          )}
           <Item
             title="Save"
-            iconName={
-              Platform.OS === "android" ? "md-checkmark" : "ios-checkmark"
-            }
+            iconName={Platform.OS === "android" ? "md-checkmark" : "ios-checkmark"}
             onPress={submitHandler}
           />
         </HeaderButtons>
       )
     });
-  }, [submitHandler]);
+  }, [submitHandler, onImportFromClipboard, onShare]);
 
   useEffect(() => {
     if (error) {
@@ -169,6 +235,7 @@ const TrackEditScreen = props => {
             initialValue={track ? track.name : ""}
             initiallyValid={!!track}
             onInputChange={inputChangeHandler}
+            newValue={formState.toSet.name}
             errorText="Please enter a valid name"
             keyboardType="default"
             autoCapitalize="sentences"
@@ -182,6 +249,7 @@ const TrackEditScreen = props => {
             initialValue={track ? track.url : ""}
             initiallyValid={!!track}
             onInputChange={inputChangeHandler}
+            newValue={formState.toSet.streamUrl}
             errorText="Please enter a valid stream Url"
             keyboardType="default"
             returnKeyType="next"
@@ -193,6 +261,7 @@ const TrackEditScreen = props => {
             initialValue={track ? track.logoUrl : ""}
             initiallyValid={!!track}
             onInputChange={inputChangeHandler}
+            newValue={formState.toSet.logoUrl}
             errorText="Please enter a valid logo Url"
             keyboardType="default"
             required

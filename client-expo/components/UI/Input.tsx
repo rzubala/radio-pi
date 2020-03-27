@@ -33,7 +33,7 @@ const Input = props => {
 
     useEffect(() => {
         if (inputState.touched) {
-            onInputChange(id, inputState.value, inputState.isValid)
+            onInputChange(id, inputState.value, inputState.isValid, '')
         }
     }, [inputState, onInputChange, id])
 
@@ -61,6 +61,14 @@ const Input = props => {
     const lostFocusHandler = () => {
         dispatch({ type: INPUT_BLUR })
     }
+
+    const {newValue} = props
+    useEffect(() => {
+        if (newValue && newValue.length > 0) {
+            textChangeHandler(newValue)
+            lostFocusHandler()
+        }    
+    }, [newValue, lostFocusHandler, textChangeHandler])
 
     return (
         <View style={styles.formControl}>
