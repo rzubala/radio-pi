@@ -5,9 +5,11 @@ import {
   StyleSheet,
   Alert,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
-import NetInfo from '@react-native-community/netinfo';
+import NetInfo from "@react-native-community/netinfo";
+import * as Localization from "expo-localization";
+import i18n from "i18n-js";
 
 import * as trackActions from "../store/actions/tracks";
 import * as configActions from "../store/actions/config";
@@ -17,13 +19,34 @@ import { play, stop, addToPlaylist, ping } from "../radio/rest-service";
 import Track from "../models/track";
 import TrackListItem from "../components/TrackListItem";
 
-const RadioScreen = props => {
+i18n.translations = {
+  en: {
+    NetworkError: "Network error!",
+    Error: 'Error',
+    NoConnection: "No connection to radio: ",
+    CheckWifi: "Please check your WiFi connection.",
+    TryAgain: "Try again",
+    ChangeAddress: "Change address",
+    Settings: "Settings"
+  },
+  pl: {
+    NetworkError: "Błąd sieci!",
+    Error: 'Błąd',
+    NoConnection: "Brak połączenia z radiem: ",
+    CheckWifi: "Sprawdź czy urządzenie jest połączone przez Wifi.",
+    TryAgain: "Spróbuj ponownie",
+    ChangeAddress: "Zmień adres",
+    Settings: "Ustawienia"
+  },
+};
+
+const RadioScreen = (props) => {
   const [connected, setConnected] = useState(false);
   const [playingId, setPlayingId] = useState("");
-  const [waitForStreams, setWaitForStreams] = useState(false)
-  const radioUrl = useSelector(state => state.config.ip);
+  const [waitForStreams, setWaitForStreams] = useState(false);
+  const radioUrl = useSelector((state) => state.config.ip);
 
-  const tracks = useSelector(state => state.tracks.tracks);
+  const tracks = useSelector((state) => state.tracks.tracks);
 
   const dispatch = useDispatch();
 
@@ -32,19 +55,19 @@ const RadioScreen = props => {
   }, [dispatch]);
 
   const checkNetwork = useCallback(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      if (state.type !== 'wifi' || !state.isConnected) {
-        Alert.alert("Network error!", "Please check your WiFi connection.", [
-          { text: "OK" }
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      if (state.type !== "wifi" || !state.isConnected) {
+        Alert.alert(i18n.t("NetworkError"), i18n.t("CheckWifi"), [
+          { text: "OK" },
         ]);
       }
     });
     unsubscribe();
-  }, [])
+  }, []);
 
   useEffect(() => {
-    checkNetwork()
-  }, [checkNetwork])
+    checkNetwork();
+  }, [checkNetwork]);
 
   const fetchRadioUrl = useCallback(() => {
     dispatch(configActions.getConfig());
@@ -52,7 +75,7 @@ const RadioScreen = props => {
 
   const pingServer = useCallback(
     async (initial: boolean) => {
-      checkNetwork()
+      checkNetwork();
       try {
         const pingData = await ping(radioUrl);
         if (initial && pingData && pingData.streamId) {
@@ -62,14 +85,14 @@ const RadioScreen = props => {
       } catch (err) {
         setConnected(false);
         Alert.alert(
-          "Error",
-          `No connection to radio: ${radioUrl}`,
+          i18n.t('Error'),
+          i18n.t('NoConnection') + radioUrl,
           [
-            { text: "Try again", onPress: () => pingServer(initial) },
+            { text: i18n.t('TryAgain'), onPress: () => pingServer(initial) },
             {
-              text: "Change address",
-              onPress: () => props.navigation.navigate("Settings")
-            }
+              text: i18n.t('ChangeAddress'),
+              onPress: () => props.navigation.navigate(i18n.t('Settings')),
+            },
           ],
           { cancelable: false }
         );
@@ -117,21 +140,23 @@ const RadioScreen = props => {
   };
 
   const onAddDefaultsHandler = () => {
-    dispatch(trackActions.createDefaultTracks())
-    setWaitForStreams(true)
-  }
+    dispatch(trackActions.createDefaultTracks());
+    setWaitForStreams(true);
+  };
 
   if (tracks.length === 0) {
     return (
-      <View style={{...styles.screen, justifyContent: 'center'}}>
-        {waitForStreams 
-        ? <ActivityIndicator size="large" color={Colors.primary} />
-        : <MainButton
-          buttonStyle={{ backgroundColor: Colors.accent }}
-          onPress={onAddDefaultsHandler}
-        >
-          Add streams
-        </MainButton>}
+      <View style={{ ...styles.screen, justifyContent: "center" }}>
+        {waitForStreams ? (
+          <ActivityIndicator size="large" color={Colors.primary} />
+        ) : (
+          <MainButton
+            buttonStyle={{ backgroundColor: Colors.accent }}
+            onPress={onAddDefaultsHandler}
+          >
+            Add streams
+          </MainButton>
+        )}
       </View>
     );
   }
@@ -142,7 +167,7 @@ const RadioScreen = props => {
         <FlatList
           keyExtractor={(item: Track) => item.id}
           data={tracks}
-          renderItem={itemData => {
+          renderItem={(itemData) => {
             return (
               <TrackListItem
                 name={itemData.item.name}
@@ -151,7 +176,7 @@ const RadioScreen = props => {
                   itemData.item.id === playingId
                     ? {
                         borderColor: Colors.primary,
-                        borderWidth: 3
+                        borderWidth: 3,
                       }
                     : {}
                 }
@@ -181,32 +206,32 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   playlistContainer: {
     flex: 7,
-    width: "100%"
+    width: "100%",
   },
   buttonsContainer: {
     flex: 1,
     width: "50%",
     justifyContent: "flex-end",
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   buttonContainer: {
     height: "100%",
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
   },
   centered: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 });
 
-export const screenOptions = props => {
+export const screenOptions = (props) => {
   return {
-    headerTitle: "Radio"
+    headerTitle: "Radio",
   };
 };
 
