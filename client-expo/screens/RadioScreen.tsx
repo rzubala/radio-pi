@@ -52,6 +52,7 @@ const RadioScreen = props => {
 
   const pingServer = useCallback(
     async (initial: boolean) => {
+      checkNetwork()
       try {
         const pingData = await ping(radioUrl);
         if (initial && pingData && pingData.streamId) {
