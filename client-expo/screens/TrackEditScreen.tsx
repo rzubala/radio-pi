@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
+import i18n from '../constants/strings'
+
 import * as tracksActions from "../store/actions/tracks";
 import Track from "../models/track";
 import Input from "../components/UI/Input";
@@ -230,7 +232,7 @@ const TrackEditScreen = props => {
       <ScrollView>
         <View style={styles.form}>
           <Input
-            label="Name"
+            label={i18n.t('Name')}
             id="name"
             initialValue={track ? track.name : ""}
             initiallyValid={!!track}
@@ -244,7 +246,7 @@ const TrackEditScreen = props => {
             required
           />
           <Input
-            label="Stream Url"
+            label={i18n.t('StreamURL')}
             id="streamUrl"
             initialValue={track ? track.url : ""}
             initiallyValid={!!track}
@@ -256,7 +258,7 @@ const TrackEditScreen = props => {
             required
           />
           <Input
-            label="Logo Url"
+            label={i18n.t('LogoURL')}
             id="logoUrl"
             initialValue={track ? track.logoUrl : ""}
             initiallyValid={!!track}
@@ -289,7 +291,7 @@ const styles = StyleSheet.create({
 export const screenOptions = navData => {
   const routeParams = navData.route.params ? navData.route.params : {};
   return {
-    headerTitle: routeParams.item ? "Edit track" : "Add track"
+    headerTitle: routeParams.item ? i18n.t('EditTrack') : i18n.t('AddTrack')
   };
 };
 

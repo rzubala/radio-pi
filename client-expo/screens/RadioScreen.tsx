@@ -8,8 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
-import * as Localization from "expo-localization";
-import i18n from "i18n-js";
+import i18n from '../constants/strings';
 
 import * as trackActions from "../store/actions/tracks";
 import * as configActions from "../store/actions/config";
@@ -18,27 +17,6 @@ import { Colors } from "../constants/colors";
 import { play, stop, addToPlaylist, ping } from "../radio/rest-service";
 import Track from "../models/track";
 import TrackListItem from "../components/TrackListItem";
-
-i18n.translations = {
-  en: {
-    NetworkError: "Network error!",
-    Error: 'Error',
-    NoConnection: "No connection to radio: ",
-    CheckWifi: "Please check your WiFi connection.",
-    TryAgain: "Try again",
-    ChangeAddress: "Change address",
-    Settings: "Settings"
-  },
-  pl: {
-    NetworkError: "Błąd sieci!",
-    Error: 'Błąd',
-    NoConnection: "Brak połączenia z radiem: ",
-    CheckWifi: "Sprawdź czy urządzenie jest połączone przez Wifi.",
-    TryAgain: "Spróbuj ponownie",
-    ChangeAddress: "Zmień adres",
-    Settings: "Ustawienia"
-  },
-};
 
 const RadioScreen = (props) => {
   const [connected, setConnected] = useState(false);
@@ -231,7 +209,7 @@ const styles = StyleSheet.create({
 
 export const screenOptions = (props) => {
   return {
-    headerTitle: "Radio",
+    headerTitle: i18n.t('Radio'),
   };
 };
 

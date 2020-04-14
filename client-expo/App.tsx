@@ -3,7 +3,7 @@ import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import ReduxThunk from 'redux-thunk'
 import * as Localization from 'expo-localization';
-import i18n from 'i18n-js';
+import i18n from './constants/strings';
 
 import AppNavigator from './navigation/AppNavigator'
 import configReducer from './store/reducers/config'

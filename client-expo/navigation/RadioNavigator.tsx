@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, I18nManager } from "react-native";
 import {
   createStackNavigator,
   StackNavigationOptions
@@ -18,6 +18,8 @@ import TracksOverviewScreen, {
   screenOptions as tracksOverviewScreenOptions
 } from "../screens/TracksOverviewScreen";
 import TrackEditScreen, { screenOptions as trackEditScreenOptions } from '../screens/TrackEditScreen'
+
+import i18n from '../constants/strings'
 
 const defaultNavOptions: StackNavigationOptions = {
   headerStyle: {
@@ -72,11 +74,11 @@ const tabBarScreenOptions = ({ route }) => ({
   tabBarIcon: ({ focused, color, size }) => {
     let iconName;
 
-    if (route.name === "Radio") {
+    if (route.name === i18n.t('Radio')) {
       iconName = focused ? "md-radio" : "md-radio";
-    } else if (route.name === "Settings") {
+    } else if (route.name === i18n.t('Settings')) {
       iconName = focused ? "ios-list-box" : "ios-list";
-    } else if (route.name === "Streams") {
+    } else if (route.name === i18n.t('Streams')) {
       iconName = focused ? "md-musical-notes" : "md-musical-notes";      
     }
     return <Ionicons name={iconName} size={size} color={color} />;
@@ -97,11 +99,11 @@ export const RadioNavigator = () => {
     >
       <RadioNavigatorTab.Screen name="Radio" component={RadioStackNavigator} />
       <RadioNavigatorTab.Screen
-        name="Settings"
+        name={i18n.t('Settings')}
         component={SettingsStackNavigator}
       />
       <RadioNavigatorTab.Screen
-        name="Streams"
+        name={i18n.t('Streams')}
         component={TracksOverviewNavigator}
       />
     </RadioNavigatorTab.Navigator>

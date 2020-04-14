@@ -6,10 +6,12 @@ import {
   StyleSheet,
   Alert,
   Slider,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  I18nManager
 } from "react-native";
 import { Colors } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+import i18n from '../constants/strings';
 
 import Input from "../components/UI/Input";
 import MainButton from "../components/UI/MainButton";
@@ -87,7 +89,7 @@ const SettingsScreen = props => {
       <View style={styles.screen}>
         <View style={styles.formControl}>
           {urlFetched && <Input
-            label="Radio service url:"
+            label={i18n.t('RadioURL')}
             id="url"
             initialValue={newUrl}
             initiallyValid={true}
@@ -107,7 +109,7 @@ const SettingsScreen = props => {
             </MainButton>
           </View>
           <View style={styles.volumeContainer}>
-            <Text style={styles.label}>Volume:</Text>
+            <Text style={styles.label}>{i18n.t('Volume')}</Text>
             <Slider
               style={styles.slider}
               minimumValue={70}
@@ -127,7 +129,7 @@ const SettingsScreen = props => {
               buttonStyle={{ backgroundColor: Colors.accent }}
               onPress={onRestartHandler}
             >
-              Restart
+              {i18n.t('Restart')}
             </MainButton>
           </View>
           <View style={styles.actionButton}>
@@ -135,7 +137,7 @@ const SettingsScreen = props => {
               buttonStyle={{ backgroundColor: Colors.alert }}
               onPress={onShutdownHandler}
             >
-              Shutdown
+              {i18n.t('Shutdown')}
             </MainButton>
           </View>
         </View>
@@ -189,7 +191,7 @@ const styles = StyleSheet.create({
 
 export const screenOptions = props => {
   return {
-    headerTitle: "Settings"
+    headerTitle: i18n.t('Settings')
   };
 };
 
